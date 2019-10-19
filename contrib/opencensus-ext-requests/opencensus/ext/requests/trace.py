@@ -77,6 +77,9 @@ def wrap_requests(requests_func):
         blacklist_hostnames = execution_context.get_opencensus_attr(
             'blacklist_hostnames')
         parsed_url = urlparse(url)
+        if parsed_url.password:
+            # redact password from url if found
+            url = url.replace(f':{parsed_url.password}@', ':********@' )
         if parsed_url.port is None:
             dest_url = parsed_url.hostname
         else:
@@ -143,7 +146,11 @@ def wrap_session_request(wrapped, instance, args, kwargs):
 
     blacklist_hostnames = execution_context.get_opencensus_attr(
         'blacklist_hostnames')
+
     parsed_url = urlparse(url)
+    if parsed_url.password:
+        # redact password from url if found
+        url = url.replace(f':{parsed_url.password}@', ':********@' )
     if parsed_url.port is None:
         dest_url = parsed_url.hostname
     else:

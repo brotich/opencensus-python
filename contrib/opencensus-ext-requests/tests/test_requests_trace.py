@@ -265,6 +265,48 @@ class Test_requests_trace(unittest.TestCase):
             mock_tracer.current_span.status.__dict__
         )
 
+    def test_wrap_requests_remove_auth(self):
+        mock_return = mock.Mock()
+        mock_return.status_code = 200
+        return_value = mock_return
+        mock_func = mock.Mock()
+        mock_func.__name__ = 'get'
+        mock_func.return_value = return_value
+        mock_tracer = MockTracer()
+
+        patch = mock.patch(
+            'opencensus.ext.requests.trace.execution_context.'
+            'get_opencensus_tracer',
+            return_value=mock_tracer)
+
+        wrapped = trace.wrap_requests(mock_func)
+
+        test_url_cases = [
+            (
+                'http://admin:mypassword@localhost:8080/test',
+                'http://admin:********@localhost:8080/test'
+            ),
+            (
+                'http://admin:@localhost:8080/test',
+                'http://admin:@localhost:8080/test'
+            ),
+            (
+                'http://admin@localhost:8080/test',
+                'http://admin@localhost:8080/test'
+            ),
+            (
+                'http://localhost:8080/test',
+                'http://localhost:8080/test'
+            ),
+        ]
+
+        for url, expected  in test_url_cases:
+            with self.subTest(), \
+                    patch:
+                wrapped(url)
+                self.assertEqual(expected,
+                            mock_tracer.current_span.attributes['http.url'])
+
     def test_wrap_requests_invalid_url(self):
         mock_return = mock.Mock()
         mock_return.status_code = 200
@@ -733,6 +775,48 @@ class Test_requests_trace(unittest.TestCase):
             expected_status.__dict__,
             mock_tracer.current_span.status.__dict__
         )
+
+    def test_wrap_session_request_removes_basic_auth_from_url(self):
+        wrapped = mock.Mock(return_value=mock.Mock(status_code=200))
+        mock_tracer = MockTracer()
+
+        patch = mock.patch(
+            'opencensus.ext.requests.trace.execution_context.'
+            'get_opencensus_tracer',
+            return_value=mock_tracer)
+
+        test_url_cases = [
+            (
+                'http://admin:mypassword@localhost:8080/test',
+                'http://admin:********@localhost:8080/test'
+            ),
+            (
+                'http://admin:@localhost:8080/test',
+                'http://admin:@localhost:8080/test'
+            ),
+            (
+                'http://admin@localhost:8080/test',
+                'http://admin@localhost:8080/test'
+            ),
+            (
+                'http://localhost:8080/test',
+                'http://localhost:8080/test'
+            ),
+        ]
+
+        request_method = 'POST'
+        kwargs = {}
+
+        for url, expected  in test_url_cases:
+            with self.subTest(), \
+                patch:
+                trace.wrap_session_request(
+                        wrapped, 'Session.request',
+                        (request_method, url), kwargs
+                    )
+
+                self.assertEqual(expected,
+                    mock_tracer.current_span.attributes['http.url'])
 
 
 class MockTracer(object):
