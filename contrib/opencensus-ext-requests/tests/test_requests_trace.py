@@ -265,7 +265,7 @@ class Test_requests_trace(unittest.TestCase):
             mock_tracer.current_span.status.__dict__
         )
 
-    def test_wrap_requests_remove_auth(self):
+    def test_wrap_request_removes_basic_auth_from_url(self):
         mock_return = mock.Mock()
         mock_return.status_code = 200
         return_value = mock_return
