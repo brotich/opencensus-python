@@ -286,6 +286,10 @@ class Test_requests_trace(unittest.TestCase):
                 'http://admin:mypassword@localhost:8080/test',
                 'http://admin:********@localhost:8080/test'
             ),
+             (
+                'http://admin:mypassword@mypassword:8080/test',
+                'http://admin:********@mypassword:8080/test'
+            ),
             (
                 'http://admin:@localhost:8080/test',
                 'http://admin:@localhost:8080/test'
@@ -789,6 +793,10 @@ class Test_requests_trace(unittest.TestCase):
             (
                 'http://admin:mypassword@localhost:8080/test',
                 'http://admin:********@localhost:8080/test'
+            ),
+            (
+                'http://admin:mypassword@mypassword:8080/test',
+                'http://admin:********@mypassword:8080/test'
             ),
             (
                 'http://admin:@localhost:8080/test',

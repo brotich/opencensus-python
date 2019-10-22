@@ -79,7 +79,7 @@ def wrap_requests(requests_func):
         parsed_url = urlparse(url)
         if parsed_url.password:
             # redact password from url if found
-            url = url.replace(f':{parsed_url.password}@', ':********@' )
+            url = url.replace(f':{parsed_url.password}@', ':********@', 1)
         if parsed_url.port is None:
             dest_url = parsed_url.hostname
         else:
@@ -150,7 +150,7 @@ def wrap_session_request(wrapped, instance, args, kwargs):
     parsed_url = urlparse(url)
     if parsed_url.password:
         # redact password from url if found
-        url = url.replace(f':{parsed_url.password}@', ':********@' )
+        url = url.replace(f':{parsed_url.password}@', ':********@', 1)
     if parsed_url.port is None:
         dest_url = parsed_url.hostname
     else:
