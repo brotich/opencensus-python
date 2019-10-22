@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Redact password in url in the trace context ([#801](https://github.com/census-instrumentation/opencensus-python/issues/801))
 
 ## 0.7.2
 Released 2019-08-26
