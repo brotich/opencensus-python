@@ -305,8 +305,7 @@ class Test_requests_trace(unittest.TestCase):
         ]
 
         for url, expected in test_url_cases:
-            with self.subTest(), \
-                    patch:
+            with patch:
                 wrapped(url)
                 self.assertEqual(
                     expected, mock_tracer.current_span.attributes['http.url'])
@@ -816,8 +815,7 @@ class Test_requests_trace(unittest.TestCase):
         kwargs = {}
 
         for url, expected in test_url_cases:
-            with self.subTest(), \
-                    patch:
+            with patch:
                 trace.wrap_session_request(
                     wrapped, 'Session.request',
                     (request_method, url), kwargs
