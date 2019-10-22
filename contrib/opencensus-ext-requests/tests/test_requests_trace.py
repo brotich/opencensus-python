@@ -286,7 +286,7 @@ class Test_requests_trace(unittest.TestCase):
                 'http://admin:mypassword@localhost:8080/test',
                 'http://admin:********@localhost:8080/test'
             ),
-             (
+            (
                 'http://admin:mypassword@mypassword:8080/test',
                 'http://admin:********@mypassword:8080/test'
             ),
@@ -304,12 +304,12 @@ class Test_requests_trace(unittest.TestCase):
             ),
         ]
 
-        for url, expected  in test_url_cases:
+        for url, expected in test_url_cases:
             with self.subTest(), \
                     patch:
                 wrapped(url)
-                self.assertEqual(expected,
-                            mock_tracer.current_span.attributes['http.url'])
+                self.assertEqual(
+                    expected, mock_tracer.current_span.attributes['http.url'])
 
     def test_wrap_requests_invalid_url(self):
         mock_return = mock.Mock()
@@ -815,16 +815,16 @@ class Test_requests_trace(unittest.TestCase):
         request_method = 'POST'
         kwargs = {}
 
-        for url, expected  in test_url_cases:
+        for url, expected in test_url_cases:
             with self.subTest(), \
-                patch:
+                    patch:
                 trace.wrap_session_request(
-                        wrapped, 'Session.request',
-                        (request_method, url), kwargs
-                    )
+                    wrapped, 'Session.request',
+                    (request_method, url), kwargs
+                )
 
-                self.assertEqual(expected,
-                    mock_tracer.current_span.attributes['http.url'])
+                self.assertEqual(
+                    expected, mock_tracer.current_span.attributes['http.url'])
 
 
 class MockTracer(object):

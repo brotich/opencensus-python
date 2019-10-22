@@ -80,7 +80,7 @@ def wrap_requests(requests_func):
         if parsed_url.password:
             # redact password from url if found in url
             url = url.replace(':{}@'.format(
-                            parsed_url.password), ':********@', 1)
+                parsed_url.password), ':********@', 1)
         if parsed_url.port is None:
             dest_url = parsed_url.hostname
         else:
